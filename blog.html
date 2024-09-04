@@ -326,7 +326,7 @@
 	<div id="consultation" class="popup">
 		<div class="popup__overlay"></div>
 		<div class="popup__wrapper">
-			<form class="popup__content _page-form">
+			<form action="sendmail.php" method="POST" class="popup__content _page-form">
 				<button type="button" class="popup__close">
 					<span></span>
 				</button>
@@ -339,16 +339,16 @@
 				<input type="tel" name="email" placeholder="Email" required>
 				<input type="tel" name="phone" placeholder="+38(0__)-___-__-__" required>
 				<h5>Меня интересует:</h5>
-				<select name="" id="" required>
-					<option value="1">Lorem ipsum dolor sit.</option>
-					<option value="2">Lorem ipsum dolor sit.</option>
-					<option value="3">Lorem ipsum dolor sit.</option>
-					<option value="4">Lorem ipsum dolor sit.</option>
-					<option value="5">Lorem ipsum dolor sit.</option>
+				<select name="interest" id="" required>
+					<option value="Интерес 1">Lorem ipsum dolor sit 1.</option>
+					<option value="Интерес 2">Lorem ipsum dolor sit 2.</option>
+					<option value="Интерес 3">Lorem ipsum dolor sit 3.</option>
+					<option value="Интерес 4">Lorem ipsum dolor sit 4.</option>
+					<option value="Интерес 5">Lorem ipsum dolor sit 5.</option>
 				</select>
 				<div class="_buttons" style="justify-content: flex-end;">
 					<button type="button" class="popup__close-button _button-transparent">Отмена</button>
-					<button type="submit" class="_button">Отправить</button>
+					<button type="submit" name="submitContact" class="_button">Отправить</button>
 				</div>
 			</form>
 		</div>
