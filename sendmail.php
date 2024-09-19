@@ -15,8 +15,6 @@ if (isset($_POST['submitContact'])) {
     $phone = $_POST['phone'];
     $interest = $_POST['interest'];
 
-
-
     $mail = new PHPMailer(true);
 
     try {
@@ -28,14 +26,13 @@ if (isset($_POST['submitContact'])) {
         $mail->Username   = 'obt.trader7@gmail.com';                     //SMTP username
         $mail->Password   = 'wjdj ntgx lgpr rrmg';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
-        $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-
-        //Recipients
+        $mail->Port       = 587;                                    //TCP port to connect to
+        $mail->CharSet = 'UTF-8';
+        //Recipients for owner
         $mail->setFrom('obt.trader7@gmail.com', 'Mailer');
-        $mail->addAddress('obt.trader7@gmail.com', 'User');     //Add a recipient
+        $mail->addAddress('obt.trader7@gmail.com', 'User');     // Send to site owner
 
-
-        //Content
+        //Content for owner
         $mail->isHTML(true);                                  //Set email format to HTML
         $mail->Subject = 'Письмо с сайта';
         $mail->Body    = '<h1>Информация о человеке</h1>
@@ -46,17 +43,43 @@ if (isset($_POST['submitContact'])) {
     ';
         $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
+        // Send email to owner
+        if($mail->send()){
+            // Create another instance of PHPMailer for the subscriber
+            $subscriberMail = new PHPMailer(true);
+            $subscriberMail->isSMTP();
+            $subscriberMail->Host       = 'smtp.gmail.com';
+            $subscriberMail->SMTPAuth   = true;
+            $subscriberMail->Username   = 'obt.trader7@gmail.com';
+            $subscriberMail->Password   = 'wjdj ntgx lgpr rrmg';
+            $subscriberMail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $subscriberMail->Port       = 587;
 
-        if( $mail->send()){
-            $_SESSION['status'] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-            header("Location: {$_SERVER["HTTP_REFERER"]}");
-            exit(0);
+            //Recipients for subscriber
+            $subscriberMail->setFrom('obt.trader7@gmail.com', 'Mailer');
+            $subscriberMail->addAddress($email);  // Send to the form submitter
+
+            //Content for subscriber
+            $subscriberMail->isHTML(true);
+            $subscriberMail->Subject = 'Подтверждение подписки';
+            $subscriberMail->Body    = '<h1>Спасибо за подписку!</h1>
+            <p>Вы подписались на рассылку.</p>';
+            $subscriberMail->AltBody = 'Спасибо за подписку!';
+
+            // Send email to subscriber
+            if($subscriberMail->send()){
+                $_SESSION['status'] = "Thank you!";
+            } else {
+                $_SESSION['status'] = "Error sending email to subscriber.";
+            }
         } else {
-            $_SESSION['status'] = "Thank you!";
-            header("Location: {$_SERVER["HTTP_REFERER"]}");
-            exit(0);
+            $_SESSION['status'] = "Message could not be sent to owner.";
         }
-       
+
+        // Redirect back to the form page
+        header("Location: {$_SERVER["HTTP_REFERER"]}");
+        exit(0);
+
     } catch (Exception $e) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
